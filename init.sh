@@ -20,8 +20,10 @@ http {
     server {
       listen 80 ; 
       server_name _ ;
-      location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }
-      location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
+      location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
+ [[ "${SERVE_STATIC}" = "true"  ]] && [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
+ [[ "${SERVE_STATIC}" = "true"  ]] ||   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
+ 
        echo
       for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 
