@@ -19,8 +19,8 @@ map $http_x_cache_get_request $xcache {
     default   $http_x_cache_get_request;
     ""        "$host";
 }
-map $cf_connecting_ip $cfip {
-    default   $cf_connecting_ip;
+map $http_cf_connecting_ip $cfip {
+    default   $http_cf_connecting_ip;
     ""        "127.0.0.1";
 }
     include /etc/nginx/mime.types; # This includes the built in mime types
