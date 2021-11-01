@@ -26,9 +26,26 @@ http {
  [[ "${SERVE_STATIC}" = "true"  ]] ||   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
  
        echo
-      for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+ [[ -z "$STATIC_PATH" ]]  ||   for CURRENT_PATH in $(echo $STATIC_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 
-[[ "${SERVE_STATIC}" = "true"  ]]  || {      echo 'location '${CURRENT_PATH}' {
+      echo 'location '${CURRENT_PATH}' {
+            set_real_ip_from  10.0.0.0/8     ;
+            set_real_ip_from  192.168.0.0/16 ;
+            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  fe80::/64      ;
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            real_ip_header    X-Forwarded-For;
+            real_ip_recursive on;
+            keepalive_timeout 10m;
+            root   /var/www/html ;
+            proxy_cache            STATIC;
+            proxy_cache_valid      200  15m
+            expires 2h;
+            add_header Cache-Control "public" ; } ';
+done
+ [[ -z "$CACHED_PATH" ]]  ||   for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+
+ {      echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
             set_real_ip_from  172.16.0.0/12  ;  
@@ -41,6 +58,7 @@ http {
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
             proxy_set_header       Host '${CACHED_HOST}' ;
+            proxy_set_header       X-Cache-Get-Request '${CACHED_HOST}';
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
 #            proxy_ignore_headers    Cookie;
