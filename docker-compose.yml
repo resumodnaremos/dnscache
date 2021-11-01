@@ -45,6 +45,7 @@ services:
       - .env
 
     volumes:
+      - ${WEBROOT:-/dev/shm/staticpage}:/var/www/html:ro
       - ./init.sh:/init.sh:ro
       - ./logformats.conf:/logformats.conf:ro
 #      - ./varnish.vcl:/etc/varnish/default.vcl
