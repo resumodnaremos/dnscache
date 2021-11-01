@@ -13,7 +13,13 @@ echo "#############+++init nginx cache+++#########"
 events {
     worker_connections        1024;
 }
+        
 http {
+map $http_x_cache_get_request $xcache {
+    default   $http_x_cache_get_request;
+    ""        "$host";
+}
+
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
     proxy_cache_path  /dev/shm/nginx-static-cache  levels=1:2    keys_zone=STATIC:15m  inactive=15m  max_size=256m;
@@ -62,7 +68,7 @@ CURRENT_PATH=""
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
             proxy_set_header       Host '${CACHED_HOST}' ;
-            proxy_set_header       X-Cache-Get-Request '${CACHED_HOST}';
+            proxy_set_header       X-Cache-Get-Request '$xcache';
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
 #            proxy_ignore_headers    Cookie;
