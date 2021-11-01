@@ -83,9 +83,9 @@ http {
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && echo ' location / { return 403 ; }'
+[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && echo ' location / { return 403 ; error_log /dev/stderr ;  }'
 
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; }'
+[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ; access_log off ; }'
 
 
 echo '    }
