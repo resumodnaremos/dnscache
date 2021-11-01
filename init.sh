@@ -21,8 +21,10 @@ http {
       listen 80 ; 
       server_name _ ;
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }
-      location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ; access_log off ; }
-      location '${CACHED_PATH}' {
+      location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ; access_log off ; }'
+       echo
+      for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+      echo 'location '${CURRENT_PATH}' {
             keepalive_timeout 10m;
             proxy_connect_timeout  5s;
             proxy_send_timeout  8s;
@@ -78,6 +80,7 @@ http {
 ##            proxy_intercept_errors on;
 #      } 
         '
+        done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
 [[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && echo ' location / { return 403 ; }'
