@@ -1,7 +1,7 @@
 apk add --no-cache  nginx-mod-http-echo bash iproute2       #varnish ; 
 
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar 
-
+echo > /etc/nginx/nginx.conf &>/dev/null &
 [[ -z ${CACHED_PATH} ]] && CACHED_PATH=/;
 [[ -z ${CACHED_HOST} ]] && CACHED_HOST=dnnd.de;
 [[ -z ${CACHED_PROTO} ]] && CACHED_PROTO=https;
