@@ -22,6 +22,9 @@ http {
       listen 80 ; 
       server_name _ ;
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
+      ## if  REDIRECT_FAVICON is a url 
+      echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
+
 [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
  
        echo
