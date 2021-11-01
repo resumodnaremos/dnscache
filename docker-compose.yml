@@ -15,9 +15,9 @@ services:
     command:
       - "/bin/bash"
       - "/init-nuster.sh"
-     environment:
-        CACHED_PATH: ${CACHED_PATH:-/}
-        CACHED_HOST: ${CACHED_HOST:-ietf.org}
+    environment:
+      CACHED_PATH: ${CACHED_PATH:-/}
+      CACHED_HOST: ${CACHED_HOST:-ietf.org}
 #    env_file:
 #      - .env
     logging:
