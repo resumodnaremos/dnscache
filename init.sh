@@ -24,7 +24,8 @@ http {
       location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
        echo
       for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
-      echo 'location '${CURRENT_PATH}' {
+
+[[ "${SERVE_STATIC}" = "true"  ]]  || {      echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
             set_real_ip_from  172.16.0.0/12  ;  
@@ -86,7 +87,17 @@ http {
 ##            proxy_cache_valid 500 502 503 504 14m;
 ##            proxy_intercept_errors on;
 #      } 
-        '
+        ' ; } ;
+[[ "${SERVE_STATIC}" = "true"  ]]  && echo 'echo 'location '${CURRENT_PATH}' {
+            set_real_ip_from  10.0.0.0/8     ;
+            set_real_ip_from  192.168.0.0/16 ;
+            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  fe80::/64      ;
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            real_ip_header    X-Forwarded-For;
+            real_ip_recursive on;
+            keepalive_timeout 10m;
+            root   /var/www/html; } ';
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
