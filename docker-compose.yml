@@ -15,9 +15,11 @@ services:
     command:
       - "/bin/bash"
       - "/init-nuster.sh"
-
-    env_file:
-      - .env
+     environment:
+        CACHED_PATH: ${CACHED_PATH:-/}
+        CACHED_HOST: ${CACHED_HOST:-ietf.org}
+#    env_file:
+#      - .env
     logging:
       driver: ${DOCKER_LOG_DRIVER:-json-file}
       options:
