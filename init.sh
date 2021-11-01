@@ -43,6 +43,7 @@ http {
             expires 2h;
             add_header Cache-Control "public" ; } ';
 done
+CURRENT_PATH=""
  [[ -z "$CACHED_PATH" ]]  ||   for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 
  {      echo 'location '${CURRENT_PATH}' {
