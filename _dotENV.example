@@ -8,3 +8,4 @@ CACHED_PATH=/api/,/static/
 CACHED_HOST=www.yourealsite.tld
 COMPOSE_POJECT_NAME=orgname
 RETURN_UNAUTH=false
+ACCESS_LOG=false

@@ -25,6 +25,13 @@ http {
        echo
       for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
       echo 'location '${CURRENT_PATH}' {
+            set_real_ip_from  10.0.0.0/8     ;
+            set_real_ip_from  192.168.0.0/16 ;
+            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  fe80::/64      ;
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            real_ip_header    X-Forwarded-For;
+            real_ip_recursive on;
             keepalive_timeout 10m;
             proxy_connect_timeout  5s;
             proxy_send_timeout  8s;
