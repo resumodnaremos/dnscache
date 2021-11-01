@@ -79,7 +79,7 @@ CURRENT_PATH=""
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
             proxy_buffering        off;
             error_log              /dev/stderr ;'
-[[ "ACCESS_LOG" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
 #            proxy_cache_valid 500 502 503 504 14m;
@@ -132,14 +132,14 @@ CURRENT_PATH=""
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
 [[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 403 ; error_log /dev/stderr ;';
-        [[ "ACCESS_LOG" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
-        [[ "ACCESS_LOG" = "true" ]] ||  echo -n ' access_log off;' ; 
+        [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
+        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
 
 [[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || { 
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
-        [[ "ACCESS_LOG" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
-        [[ "ACCESS_LOG" = "true" ]] ||  echo -n ' access_log off;' ; 
+        [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
+        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
 
 
