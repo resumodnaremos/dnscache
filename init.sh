@@ -19,7 +19,10 @@ map $http_x_cache_get_request $xcache {
     default   $http_x_cache_get_request;
     ""        "$host";
 }
-
+map $cf_connecting_ip $cfip {
+    default   $cf_connecting_ip;
+    ""        "127.0.0.1";
+}
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
     proxy_cache_path  /dev/shm/nginx-static-cache  levels=1:2    keys_zone=STATIC:15m  inactive=15m  max_size=256m;
@@ -69,6 +72,7 @@ CURRENT_PATH=""
             proxy_read_timeout  10s;
             proxy_set_header       Host '${CACHED_HOST}' ;
             proxy_set_header       X-Cache-Get-Request "$xcache";
+            proxy_set_header       CF-Connecting-IP "$cfip";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
 #            proxy_ignore_headers    Cookie;
