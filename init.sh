@@ -1,6 +1,6 @@
 apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ; 
 
-
+#bash /_0_crt-snakeoil.sh
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar 
 echo > /etc/nginx/nginx.conf &>/dev/null &
 [[ -z ${CACHED_PATH} ]] && CACHED_PATH=/;
