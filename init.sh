@@ -21,7 +21,7 @@ http {
       listen 80 ; 
       server_name _ ;
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }
-      location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ; access_log off ; }'
+      location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
        echo
       for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
       echo 'location '${CURRENT_PATH}' {
@@ -44,12 +44,12 @@ http {
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
 #            proxy_set_header       X-Templar-Cache 'fallback' ;
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
-            proxy_buffering        on;
-            error_log              /dev/stderr ;
-            access_log             /dev/stdout upstream;
-
-            #proxy_cache_valid 500 502 503 504 14m;
-            proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
+            proxy_buffering        off;
+            error_log              /dev/stderr ;'
+[[ "ACCESS_LOG" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
+ echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
+#            proxy_cache_valid 500 502 503 504 14m;
+#            proxy_cache_valid 500 502 503 504 14m;
 #            proxy_intercept_errors on;
  #           error_page 500 502 503 504 404 @fallback;
 
@@ -83,9 +83,17 @@ http {
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && echo ' location / { return 403 ; error_log /dev/stderr ;  }'
+[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
+        echo ' location / { return 403 ; error_log /dev/stderr ;';
+        [[ "ACCESS_LOG" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
+        [[ "ACCESS_LOG" = "true" ]] ||  echo -n ' access_log off;' ; 
+        echo ' }' ; } ;
 
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ; access_log off ; }'
+[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || { 
+        echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
+        [[ "ACCESS_LOG" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
+        [[ "ACCESS_LOG" = "true" ]] ||  echo -n ' access_log off;' ; 
+        echo ' }' ; } ;
 
 
 echo '    }
