@@ -102,7 +102,7 @@ http {
             root   /var/www/html ;
             proxy_cache            STATIC;
             proxy_cache_valid      200  15m
-            expires 1m;
+            expires 2h;
             add_header Cache-Control "public" ; } ';
         done
 
