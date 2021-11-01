@@ -88,7 +88,7 @@ http {
 ##            proxy_intercept_errors on;
 #      } 
         ' ; } ;
-[[ "${SERVE_STATIC}" = "true"  ]]  && echo 'echo 'location '${CURRENT_PATH}' {
+[[ "${SERVE_STATIC}" = "true"  ]]  && echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
             set_real_ip_from  172.16.0.0/12  ;  
@@ -97,7 +97,7 @@ http {
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            root   /var/www/html; } ';
+            root   /var/www/html ; } ';
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
