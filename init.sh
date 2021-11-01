@@ -97,7 +97,11 @@ http {
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            root   /var/www/html ; } ';
+            root   /var/www/html ;
+            proxy_cache            STATIC;
+            proxy_cache_valid      200  15m
+            expires 1m;
+            add_header Cache-Control "public" ; } ';
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
