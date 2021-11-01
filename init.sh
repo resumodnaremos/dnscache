@@ -71,7 +71,7 @@ CURRENT_PATH=""
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
             proxy_set_header       Host '${CACHED_HOST}' ;
-            proxy_set_header       XCacheGetRequest "$xcache";
+            proxy_set_header       X-Cachegetrequest "$xcache";
             proxy_set_header       CF-Connecting-IP "$cfip";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
