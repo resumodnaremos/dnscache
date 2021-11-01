@@ -1,0 +1,10 @@
+VIRTUAL_PORT=80
+VIRTUAL_PROTO=http
+
+VIRTUAL_HOST=cache.yourhost.lan
+LETSENCRYPT_EMAIL=no@body.lan
+LETSENCRYPT_HOST=cache.yourhost.lan
+CACHED_PATH="/api/"
+CACHED_HOST=www.yourealsite.tld
+COMPOSE_POJECT_NAME=orgname
+RETURN_UNAUTH=false
