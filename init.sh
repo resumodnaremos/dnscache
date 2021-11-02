@@ -46,7 +46,6 @@ map $http_cf_connecting_ip $cfip {
 
 [[ ! -z "${REPLACESTRING}"  ]] && {
 echo '
-            gunzip on;
             sub_filter_once off;
             sub_filter_types text/html text/css application/javascript text/xml;'
 }
@@ -134,6 +133,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
+            gunzip on;
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
@@ -230,6 +230,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
+            gunzip on;
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
