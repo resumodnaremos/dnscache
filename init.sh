@@ -101,14 +101,14 @@ CURRENT_PATH=""
 
 # custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
-[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404;' ## trailing slash
-[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'      
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404/;' ## trailing slash
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404;'      
 }
 
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
-[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502;' ## trailing slash
-[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'            
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502/;' ## trailing slash
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'            
 } 
 
 
