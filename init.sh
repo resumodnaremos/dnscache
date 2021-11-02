@@ -1,6 +1,6 @@
-#apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ;
+apk add --no-cache  nginx nginx-mod-http-echo bash iproute2  openssl      #varnish ;
 apk upgrade;
-apk add --no-cache  bash iproute2  openssl      #varnish ;
+#apk add --no-cache  bash iproute2  openssl      #varnish ;
 
 echo "nginx mods available via config:"
 ls /etc/nginx/modules/*.conf -1
