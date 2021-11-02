@@ -8,7 +8,7 @@ services:
     image: nuster/nuster
     dns:
       - "${DNSONE:-1.1.1.1}"
-      - "${DNSTWO:-1.1.1.1}"
+      - "${DNSTWO:-9.9.9.9}"
     volumes: 
       - ./nuster.cfg:/nuster.template:ro
       - ./init-nuster.sh:/init-nuster.sh:ro
