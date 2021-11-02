@@ -13,15 +13,15 @@ ls /etc/nginx/modules/*.conf -1
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar
 echo > /etc/nginx/nginx.conf &>/dev/null &
 
-[[ -z ${CACHEMB}   ]]      && CACHEMB=512
-[[ -z ${CACHETIME} ]]      && CACHETIME=15m
-[[ -z ${TIMEOUT}   ]]      && TIMEOUT=5s
+[[ -z ${CACHEMB}        ]] && CACHEMB=512
+[[ -z ${CACHETIME}      ]] && CACHETIME=15m
+[[ -z ${TIMEOUT}        ]] && TIMEOUT=5s
 [[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
 
-[[ -z ${CACHED_PATH} ]]    && CACHED_PATH=/;
-[[ -z ${CACHED_HOST} ]]    && CACHED_HOST=dnnd.de;
-[[ -z ${CACHED_PROTO} ]]   && CACHED_PROTO=https;
-[[ -z ${VIRTUAL_HOST} ]]   && VIRTUAL_HOST=nginx-cache-proxy.lan;
+[[ -z ${CACHED_PATH}    ]] && CACHED_PATH=/;
+[[ -z ${CACHED_HOST}    ]] && CACHED_HOST=dnnd.de;
+[[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
+[[ -z ${VIRTUAL_HOST}   ]] && VIRTUAL_HOST=nginx-cache-proxy.lan;
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
 echo "#############+++init nginx cache+++#########"
 ( echo '
@@ -52,8 +52,8 @@ map $http_cf_connecting_ip $cfip {
     server {
       listen 80 ;
       server_name _ ;
-      location /this_proxy_is_online { default_type text/plain; root /dev/shm/.okresponse/ ; }
-      location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
+      location /this_proxy_is_online { default_type text/plain;   root /dev/shm/.okresponse/ ;error_log /dev/stderr ; access_log off ; }
+      location /nginx_status         { stub_status; access_log off; allow 127.0.0.1; deny all ; }'
       ## if  REDIRECT_FAVICON is a url
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
 
@@ -338,6 +338,6 @@ echo '    }
 
 sleep 0.2
 #while (true);do varnishd -a :80 -f /etc/varnish/default.vcl -F;sleep 0.2;done &
-while (true);do curl -s 127.0.0.1/nginx_status|sed 's/$/|/g'|tr -d '\n'|sed 's/^/STATS: /g';sleep 3600;done &
+while (true);do curl -s 127.0.0.1/nginx_status|sed 's/$/|/g'|tr -d '\n'|sed 's/^/STATS: /g';echo;sleep 3600;done &
 while (true);do nginx -t  && nginx -g  'daemon off;' ;sleep 0.4;done
 #wait
