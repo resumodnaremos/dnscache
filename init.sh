@@ -116,7 +116,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
       echo 'sub_filter_once off;
-            sub_filter_types text/html;
+            sub_filter_types text/html text/css application/javascript;
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
@@ -236,7 +236,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
       echo 'sub_filter_once off;
-            sub_filter_types text/html;
+            sub_filter_types text/html text/css application/javascript;
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
