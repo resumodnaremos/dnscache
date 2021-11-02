@@ -151,7 +151,7 @@ CURRENT_PATH=""
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
 
-[[ ! "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || { 
+[[ ! "${CACHED_PATH}" = "/" ]] && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && { 
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
