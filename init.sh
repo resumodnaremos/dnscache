@@ -33,11 +33,11 @@ map $http_cf_connecting_ip $cfip {
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
     proxy_cache_path  /dev/shm/nginx-static-cache  levels=1:2    keys_zone=STATIC:15m  inactive=15m  max_size=256m;
-    proxy_cache_path  /dev/shm/nginx-backup-cache  levels=1:2    keys_zone=BACKUP:15m  inactive=24h  max_size=256m;
-
+    proxy_cache_path  /dev/shm/nginx-backup-cache  levels=1:2    keys_zone=BACKUP:15m  inactive=24h  max_size=256m
     server {
       listen 80 ; 
       server_name _ ;
+      location /this_proxy_is_online {. default_type text/plain;. echo "OK"; return 200; }
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
       ## if  REDIRECT_FAVICON is a url 
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
