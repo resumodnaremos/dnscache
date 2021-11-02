@@ -19,3 +19,4 @@ TIMEOUT=5s
 HIDECLIENT=false
 EXPIREHEADER=12h
 LOCALPORT=65080
+CUSTOMENDPOINTS=/css:anotherhost.com,/search:thethirdhost.lan
