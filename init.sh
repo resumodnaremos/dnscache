@@ -1,4 +1,5 @@
-apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ;
+#apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ;
+apk add --no-cache  bash iproute2  openssl      #varnish ;
 
 
 #bash /_0_crt-snakeoil.sh
