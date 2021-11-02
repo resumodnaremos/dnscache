@@ -144,14 +144,14 @@ CURRENT_PATH=""
         ' ; } ;
         done
 
-## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
+## if we cache more than the root path and RETURN_UNAUTH is set , reject everyhting except one path and favicon
+[[ "${CACHED_PATH}" = "/" ]] || [[ "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 403 ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
 
-[[ "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] || { 
+[[ "${CACHED_PATH}" = "/" ]] || [[ "${RETURN_UNAUTH}" = "true"   ]] || { 
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
