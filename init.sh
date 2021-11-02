@@ -1,6 +1,11 @@
-apk add --no-cache  nginx nginx-mod-http-echo bash iproute2  openssl      #varnish ;
+#apk add --no-cache  nginx nginx-mod-http-echo bash iproute2  openssl      #varnish ;
 apk upgrade;
-#apk add --no-cache  bash iproute2  openssl      #varnish ;
+apk add --no-cache  bash iproute2  openssl      #varnish ;
+# OH NO alpine-linux
+## module "/etc/nginx/modules/ngx_http_echo_module.so" version 1020001 instead of 1021003 in /etc/nginx/modules/10_http_echo.conf:1
+
+mkdir /dev/shm/.okresponse
+echo "OK" > /dev/shm/.okresponse/this_proxy_is_online
 
 echo "nginx mods available via config:"
 ls /etc/nginx/modules/*.conf -1
@@ -46,7 +51,7 @@ map $http_cf_connecting_ip $cfip {
     server {
       listen 80 ;
       server_name _ ;
-      location /this_proxy_is_online { default_type text/plain; echo "OK"; return 200; };
+      location /this_proxy_is_online { default_type text/plain; root /dev/shm/.okresponse/ ; return 200; };
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
       ## if  REDIRECT_FAVICON is a url
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
