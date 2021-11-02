@@ -17,13 +17,15 @@ echo > /etc/nginx/nginx.conf &>/dev/null &
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
 echo "#############+++init nginx cache+++#########"
 ( echo '
+pid        /var/run/nginx.pid;
+
+# Includes files with directives to load dynamic modules.
+include /etc/nginx/modules/*.conf;
+
 worker_processes  '$(($(nproc)*2))';
 events {
     worker_connections        1024;
 }
-
-# Includes files with directives to load dynamic modules.
-include /etc/nginx/modules/*.conf;
 
 http {
 map $http_xcachegetrequest $xcache {
