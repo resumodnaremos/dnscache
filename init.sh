@@ -136,7 +136,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
-            gunzip on;
+            gunzip on;    proxy_set_header Accept-Encoding "";
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
@@ -236,7 +236,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
-            gunzip on;
+            gunzip on;    proxy_set_header Accept-Encoding "";
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
