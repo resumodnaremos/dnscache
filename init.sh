@@ -51,7 +51,7 @@ map $http_cf_connecting_ip $cfip {
     server {
       listen 80 ;
       server_name _ ;
-      location /this_proxy_is_online { default_type text/plain; root /dev/shm/.okresponse/ ; return 200; };
+      location /this_proxy_is_online { default_type text/plain; root /dev/shm/.okresponse/ ; return 200 ; };
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
       ## if  REDIRECT_FAVICON is a url
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
@@ -329,9 +329,9 @@ done
 echo '    }
 
 }
- ' ) |grep -v '^#'| tee /etc/nginx/nginx.conf |nl 2>&1   |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
+ ' ) | tee /etc/nginx/nginx.conf |nl 2>&1   |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
 ###  ^^ show config      with lines ^
-
+#|grep -v '^#'
 
 #nginx -t  && nginx -g  'daemon off;'
 
