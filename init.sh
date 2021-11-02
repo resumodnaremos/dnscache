@@ -1,8 +1,8 @@
-apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ; 
+apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ;
 
 
 #bash /_0_crt-snakeoil.sh
-##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar 
+##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar
 echo > /etc/nginx/nginx.conf &>/dev/null &
 
 [[ -z ${CACHEMB}   ]]      && CACHEMB=512
@@ -17,10 +17,14 @@ echo > /etc/nginx/nginx.conf &>/dev/null &
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
 echo "#############+++init nginx cache+++#########"
 ( echo '
+worker_processes  '$(($(nproc)*2))';
 events {
     worker_connections        1024;
 }
-        
+
+# Includes files with directives to load dynamic modules.
+include /etc/nginx/modules/*.conf;
+
 http {
 map $http_xcachegetrequest $xcache {
     default   $http_xcachegetrequest;
@@ -35,18 +39,18 @@ map $http_cf_connecting_ip $cfip {
     proxy_cache_path  /dev/shm/nginx-static-cache  levels=1:2    keys_zone=STATIC:15m  inactive=15m  max_size=256m;
     proxy_cache_path  /dev/shm/nginx-backup-cache  levels=1:2    keys_zone=BACKUP:15m  inactive=24h  max_size=256m;
     server {
-      listen 80 ; 
+      listen 80 ;
       server_name _ ;
       location /this_proxy_is_online { default_type text/plain; echo "OK"; return 200; };
       location /nginx_status {        stub_status;        access_log off;        allow 127.0.0.1;        deny all;      }'
-      ## if  REDIRECT_FAVICON is a url 
+      ## if  REDIRECT_FAVICON is a url
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
 
 [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
 
 [[ ! -z "${REPLACESTRING}"  ]] && {
 echo '
-            gunzip on;   
+            gunzip on;
             sub_filter_once off;
             sub_filter_types text/html text/css application/javascript text/xml;'
 }
@@ -57,9 +61,9 @@ echo
       echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
-            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  172.16.0.0/12  ;
             set_real_ip_from  fe80::/64      ;
-            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA)
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
@@ -75,9 +79,9 @@ CURRENT_PATH=""
  {      echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
-            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  172.16.0.0/12  ;
             set_real_ip_from  fe80::/64      ;
-            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA)
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
@@ -109,17 +113,17 @@ CURRENT_PATH=""
 # custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
 [[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404/;' ## trailing slash
-[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404;'      
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404;'
 }
 
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
 [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502/;' ## trailing slash
-[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'            
-} 
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'
+}
 
 
-[[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
+[[ "${HIDECLIENT}" = "true" ]] ||  echo '
             proxy_set_header       CF-Connecting-IP "$cfip";
             proxy_set_header       X-Forwarded-For  "$cfip";' ;
 [[ "${HIDECLIENT}" = "true" ]] &&  echo '
@@ -129,7 +133,7 @@ CURRENT_PATH=""
             proxy_set_header       X-Real-IP        "10.254.254.254";
             proxy_set_header       cfip             "10.254.254.254";';
 
-[[ ! -z "${REPLACESTRING}"  ]] && {  
+[[ ! -z "${REPLACESTRING}"  ]] && {
 echo '
             sub_filter_once off;
             sub_filter_types text/html text/css application/javascript text/xml;'
@@ -148,7 +152,7 @@ done
              proxy_intercept_errors on;
 #            error_page 500 502 503 504 404 @fallback;
 
-       } 
+       }
 #      location @fallback {
 #            access_log             /dev/stdout fallback;
 #    keepalive_timeout 10m;
@@ -173,7 +177,7 @@ done
 #            proxy_cache_use_stale  error timeout invalid_header updating  http_500 http_502 http_503 http_504;
 ##            proxy_cache_valid 500 502 503 504 14m;
             proxy_intercept_errors on;
-#      } 
+#      }
         ' ; } ;
         done
 
@@ -184,14 +188,14 @@ CURRENT_PATH=""
  [[ ! -z "$CUSTOMENDPOINTS" ]]  &&   for CURRENT_ENDPOINT in $(echo $CUSTOMENDPOINTS|sed 's/,/\n/g;s/^ //g;s/ $//g');do
  CURRENT_PATH=${CURRENT_ENDPOINT/:*/}
  CURRENT_HOST=${CURRENT_ENDPOINT/*:/}
- 
+
 
  {      echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
-            set_real_ip_from  172.16.0.0/12  ;  
+            set_real_ip_from  172.16.0.0/12  ;
             set_real_ip_from  fe80::/64      ;
-            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA)
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
@@ -219,7 +223,7 @@ CURRENT_PATH=""
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
-[[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
+[[ "${HIDECLIENT}" = "true" ]] ||  echo '
             proxy_set_header       CF-Connecting-IP "$cfip";
             proxy_set_header       X-Forwarded-For  "$cfip";' ;
 [[ "${HIDECLIENT}" = "true" ]] &&  echo '
@@ -245,14 +249,14 @@ done
 # custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
 [[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404;' ## trailing slash
-[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'      
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'
 }
 
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
 [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502;' ## trailing slash
-[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'            
-} 
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'
+}
 
 
 
@@ -262,7 +266,7 @@ done
             proxy_intercept_errors on;
 #            error_page 500 502 503 504 404 @fallback;
 
-       } 
+       }
 #      location @fallback {
 #            access_log             /dev/stdout fallback;
 #    keepalive_timeout 10m;
@@ -287,7 +291,7 @@ done
 #            proxy_cache_use_stale  error timeout invalid_header updating  http_500 http_502 http_503 http_504;
 ##            proxy_cache_valid 500 502 503 504 14m;
 ##            proxy_intercept_errors on;
-#      } 
+#      }
         ' ; } ;
         done
 
@@ -295,20 +299,20 @@ done
 [[ ! "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 403 ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
-        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
+        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
         echo ' }' ; } ;
 
-[[ ! "${CACHED_PATH}" = "/" ]] && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && { 
+[[ ! "${CACHED_PATH}" = "/" ]] && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
-        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
+        [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
         echo ' }' ; } ;
 
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
-        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } '
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } '
 
 
 ### below we close http and server section
@@ -323,5 +327,5 @@ echo '    }
 
 sleep 0.2
 #while (true);do varnishd -a :80 -f /etc/varnish/default.vcl -F;sleep 0.2;done &
-while (true);do nginx -t  && nginx -g  'daemon off;' ;sleep 0.4;done 
+while (true);do nginx -t  && nginx -g  'daemon off;' ;sleep 0.4;done
 #wait
