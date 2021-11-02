@@ -44,11 +44,12 @@ map $http_cf_connecting_ip $cfip {
 
 [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
 
-##[[ ! -z "${REPLACESTRING}"  ]] && {
-##echo '
-##            sub_filter_once off;
-##            sub_filter_types text/html text/css application/javascript text/xml;'
-##}
+[[ ! -z "${REPLACESTRING}"  ]] && {
+echo '
+            gunzip on;   
+            sub_filter_once off;
+            sub_filter_types text/html text/css application/javascript text/xml;'
+}
 
 echo
 [[ ! -z "$STATIC_PATH" ]]  &&   for CURRENT_PATH in $(echo $STATIC_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
@@ -136,7 +137,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
-            gunzip on;    proxy_set_header Accept-Encoding "";
+            proxy_set_header Accept-Encoding "";
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
@@ -236,7 +237,7 @@ for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
 echo '
-            gunzip on;    proxy_set_header Accept-Encoding "";
+            proxy_set_header Accept-Encoding "";
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
