@@ -251,9 +251,9 @@ CURRENT_PATH=""
         echo ' }' ; } ;
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
-        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 8.8.8.8 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 8.8.8.8 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 
 
 ### below we close http and server section

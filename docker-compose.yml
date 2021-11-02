@@ -7,8 +7,8 @@ services:
     container_name: cache.${VIRTUAL_HOST}
     image: nuster/nuster
     dns:
-      - "1.1.1.1"
-      - "9.9.9.9"
+      - "${DNSONE:-1.1.1.1}"
+      - "${DNSTWO:-1.1.1.1}"
     volumes: 
       - ./nuster.cfg:/nuster.template:ro
       - ./init-nuster.sh:/init-nuster.sh:ro
