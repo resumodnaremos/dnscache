@@ -43,6 +43,18 @@ map $http_cf_connecting_ip $cfip {
       echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
 
 [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
+
+[[ ! -z "${REPLACESTRING}"  ]] && {
+echo '
+            sub_filter_once off;
+            sub_filter_types text/html text/css application/javascript;'
+for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+SEARCH=${CURRSTRING/:*/}
+NEWTXT=${CURRSTRING/*:/}
+echo '
+            sub_filter "'$SEARCH'" "'$NEWTXT'";'
+done
+}
  
        echo
  [[ ! -z "$STATIC_PATH" ]]  &&   for CURRENT_PATH in $(echo $STATIC_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
@@ -111,18 +123,6 @@ CURRENT_PATH=""
 [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'            
 } 
 
-
-[[ ! -z "${REPLACESTRING}"  ]] && {
-echo '
-            sub_filter_once off;
-            sub_filter_types text/html text/css application/javascript;'
-for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
-SEARCH=${CURRSTRING/:*/}
-NEWTXT=${CURRSTRING/*:/}
-echo '
-            sub_filter "'$SEARCH'" "'$NEWTXT'";'
-done
-}
 
 [[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
             proxy_set_header       CF-Connecting-IP "$cfip";
@@ -234,16 +234,6 @@ CURRENT_PATH=""
 [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'            
 } 
 
-[[ ! -z "${REPLACESTRING}"  ]] && {
-echo '
-            sub_filter_once off;
-            sub_filter_types text/html text/css application/javascript;'
-for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
-SEARCH=${CURRSTRING/:*/}
-NEWTXT=${CURRSTRING/*:/}
-echo '
-            sub_filter "'$SEARCH'" "'$NEWTXT'";'
-done
 }
 
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
