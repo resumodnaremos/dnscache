@@ -99,8 +99,17 @@ CURRENT_PATH=""
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
 
-[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404;'
-[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502;'
+# custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404;' ## trailing slash
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'      
+}
+
+
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502;' ## trailing slash
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'            
+} 
 
 
 [[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
@@ -251,6 +260,7 @@ CURRENT_PATH=""
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
+
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
         location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
