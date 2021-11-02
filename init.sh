@@ -71,15 +71,13 @@ CURRENT_PATH=""
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
             proxy_set_header       Host '${CACHED_HOST}' ;
-            proxy_set_header       X-Cachegetrequest "$xcache";
-            proxy_set_header       CF-Connecting-IP "$cfip";
+            proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
 #            proxy_ignore_headers    Cookie;
 
 #            proxy_hide_header       Set-Cookie;
 #            proxy_ignore_headers    Set-Cookie;
-
 #            proxy_pass             http://127.0.0.1:1234 ; ## varnish
 #            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
             proxy_cache            STATIC;
@@ -90,6 +88,19 @@ CURRENT_PATH=""
             proxy_buffering        off;
             error_log              /dev/stderr ;'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
+[[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
+
+[[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
+            proxy_set_header       CF-Connecting-IP "$cfip";
+            proxy_set_header       X-Forwarded-For  "$cfip";' ;
+[[ "${HIDECLIENT}" = "true" ]] &&  echo '
+            proxy_set_header        "User-Agent" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/91.0";
+            proxy_set_header       CF-Connecting-IP "10.254.254.254";
+            proxy_set_header       X-Forwarded-For  "10.254.254.254";
+            proxy_set_header       X-Real-IP        "10.254.254.254";
+            proxy_set_header       cfip             "10.254.254.254";';
+
+
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
 #            proxy_cache_valid 500 502 503 504 14m;
