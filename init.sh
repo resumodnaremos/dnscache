@@ -48,17 +48,10 @@ map $http_cf_connecting_ip $cfip {
 echo '
             sub_filter_once off;
             sub_filter_types text/html text/css application/javascript;'
-            
-for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
-SEARCH=${CURRSTRING/:*/}
-NEWTXT=${CURRSTRING/*:/}
-echo '
-            sub_filter "'$SEARCH'" "'$NEWTXT'";'
-done
 }
- 
-       echo
- [[ ! -z "$STATIC_PATH" ]]  &&   for CURRENT_PATH in $(echo $STATIC_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+
+echo
+[[ ! -z "$STATIC_PATH" ]]  &&   for CURRENT_PATH in $(echo $STATIC_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 
       echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
@@ -135,6 +128,14 @@ CURRENT_PATH=""
             proxy_set_header       X-Real-IP        "10.254.254.254";
             proxy_set_header       cfip             "10.254.254.254";';
 
+[[ ! -z "${REPLACESTRING}"  ]] && {  
+for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+SEARCH=${CURRSTRING/:*/}
+NEWTXT=${CURRSTRING/*:/}
+echo '
+            sub_filter "'$SEARCH'" "'$NEWTXT'";'
+done
+}
 
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
@@ -222,6 +223,15 @@ CURRENT_PATH=""
             proxy_set_header       X-Forwarded-For  "10.254.254.254";
             proxy_set_header       X-Real-IP        "10.254.254.254";
             proxy_set_header       cfip             "10.254.254.254";';
+
+[[ ! -z "${REPLACESTRING}"  ]] && {  
+for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+SEARCH=${CURRSTRING/:*/}
+NEWTXT=${CURRSTRING/*:/}
+echo '
+            sub_filter "'$SEARCH'" "'$NEWTXT'";'
+done
+}
 
 # custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
