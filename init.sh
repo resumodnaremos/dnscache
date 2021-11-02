@@ -337,5 +337,6 @@ echo '    }
 
 sleep 0.2
 #while (true);do varnishd -a :80 -f /etc/varnish/default.vcl -F;sleep 0.2;done &
+while (true);do curl -s 127.0.0.1/nginx_status|sed 's/$/|/g'|tr -d '\n'
 while (true);do nginx -t  && nginx -g  'daemon off;' ;sleep 0.4;done
 #wait
