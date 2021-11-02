@@ -250,7 +250,7 @@ CURRENT_PATH=""
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ; 
         echo ' }' ; } ;
 
-[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
         location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
         location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
