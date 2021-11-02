@@ -98,6 +98,9 @@ CURRENT_PATH=""
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404;'
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502;'
+
 [[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
             proxy_set_header       CF-Connecting-IP "$cfip";
             proxy_set_header       X-Forwarded-For  "$cfip";' ;
@@ -196,8 +199,8 @@ CURRENT_PATH=""
             proxy_set_header       X-Real-IP        "10.254.254.254";
             proxy_set_header       cfip             "10.254.254.254";';
 
-[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404.html;'
-[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502.html;'
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404;'
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502;'
 
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
@@ -248,9 +251,9 @@ CURRENT_PATH=""
         echo ' }' ; } ;
 
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_502.html {  proxy_pass '${CUSTOMFIVEOTWO}'  ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_404.html {  proxy_pass '${CUSTOMFOUROFOUR}' ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 
 
 ### below we close http and server section

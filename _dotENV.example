@@ -20,3 +20,5 @@ HIDECLIENT=false
 EXPIREHEADER=12h
 LOCALPORT=65080
 CUSTOMENDPOINTS=/css:anotherhost.com,/search:thethirdhost.lan
+CUSTOMFOUROFOUR=https://mysite.lan/notfound/
+CUSTOMFIVEOTWO=https://mysite.lan/gatewayerror/
