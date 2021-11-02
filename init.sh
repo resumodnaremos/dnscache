@@ -330,7 +330,7 @@ done
 echo '    }
 
 }
- ' ) | tee /etc/nginx/nginx.conf |nl 2>&1  #|grep -v '^#' |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
+ ' ) | tee /etc/nginx/nginx.conf |grep -v '^#'  |nl 2>&1  |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
 ###  ^^ show config      with lines ^
 #
 
