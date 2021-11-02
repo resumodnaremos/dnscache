@@ -1,8 +1,15 @@
 apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ; 
 
+
 #bash /_0_crt-snakeoil.sh
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar 
 echo > /etc/nginx/nginx.conf &>/dev/null &
+
+[[ -z ${CACHEMB}   ]] && CACHEMB=512
+[[ -z ${CACHETIME} ]] && CACHETIME=15m
+[[ -z ${TIMEOUT}   ]] && TIMEOUT=5s
+[[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
+
 [[ -z ${CACHED_PATH} ]] && CACHED_PATH=/;
 [[ -z ${CACHED_HOST} ]] && CACHED_HOST=dnnd.de;
 [[ -z ${CACHED_PROTO} ]] && CACHED_PROTO=https;
@@ -51,8 +58,8 @@ map $http_cf_connecting_ip $cfip {
             keepalive_timeout 10m;
             root   /var/www/html ;
             proxy_cache            STATIC;
-            proxy_cache_valid      200  15m;
-            expires 2h;
+            proxy_cache_valid      200  '${CACHETIME}';
+            expires '${EXPIREHEADER}';
             add_header Cache-Control "public" ; } ';
 done
 CURRENT_PATH=""
@@ -81,7 +88,8 @@ CURRENT_PATH=""
 #            proxy_pass             http://127.0.0.1:1234 ; ## varnish
 #            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
             proxy_cache            STATIC;
-            proxy_cache_valid      200  15m;
+            proxy_cache_valid      200  '${CACHETIME}';
+            expires '${EXPIREHEADER}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
 #            proxy_set_header       X-Templar-Cache 'fallback' ;
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
@@ -134,20 +142,6 @@ CURRENT_PATH=""
 ##            proxy_intercept_errors on;
 #      } 
         ' ; } ;
-[[ "${SERVE_STATIC}" = "true"  ]]  && echo 'location '${CURRENT_PATH}' {
-            set_real_ip_from  10.0.0.0/8     ;
-            set_real_ip_from  192.168.0.0/16 ;
-            set_real_ip_from  172.16.0.0/12  ;  
-            set_real_ip_from  fe80::/64      ;
-            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA) 
-            real_ip_header    X-Forwarded-For;
-            real_ip_recursive on;
-            keepalive_timeout 10m;
-            root   /var/www/html ;
-            proxy_cache            STATIC;
-            proxy_cache_valid      200  15m;
-            expires 2h;
-            add_header Cache-Control "public" ; } ';
         done
 
 ## if REtURN_UNAUTH is set , reject everyhting except one path and favicon
