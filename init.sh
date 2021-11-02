@@ -34,8 +34,9 @@ worker_processes  '$(($(nproc)*2))';
 events {
     worker_connections        1024;
 }
-proxy_headers_hash_max_size 1024;
 http {
+proxy_headers_hash_max_size 1024;
+
 map $http_xcachegetrequest $xcache {
     default   $http_xcachegetrequest;
     ""        "$host";
