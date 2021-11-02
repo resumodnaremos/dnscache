@@ -36,7 +36,7 @@ events {
 }
 http {
 proxy_headers_hash_max_size 1024;
-
+proxy_headers_hash_bucket_size 512;
 map $http_xcachegetrequest $xcache {
     default   $http_xcachegetrequest;
     ""        "$host";
