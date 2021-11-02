@@ -2,7 +2,8 @@
 apk upgrade;
 apk add --no-cache  bash iproute2  openssl      #varnish ;
 
-
+echo "nginx mods available via config:"
+ls /etc/nginx/modules/*.conf -1
 #bash /_0_crt-snakeoil.sh
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar
 echo > /etc/nginx/nginx.conf &>/dev/null &
