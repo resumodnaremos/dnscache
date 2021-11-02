@@ -33,7 +33,7 @@ map $http_cf_connecting_ip $cfip {
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
     proxy_cache_path  /dev/shm/nginx-static-cache  levels=1:2    keys_zone=STATIC:15m  inactive=15m  max_size=256m;
-    proxy_cache_path  /dev/shm/nginx-backup-cache  levels=1:2    keys_zone=BACKUP:15m  inactive=24h  max_size=256m
+    proxy_cache_path  /dev/shm/nginx-backup-cache  levels=1:2    keys_zone=BACKUP:15m  inactive=24h  max_size=256m;
     server {
       listen 80 ; 
       server_name _ ;
