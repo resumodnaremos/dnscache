@@ -115,8 +115,8 @@ CURRENT_PATH=""
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
 #            proxy_cache_valid 500 502 503 504 14m;
-#            proxy_intercept_errors on;
- #           error_page 500 502 503 504 404 @fallback;
+             proxy_intercept_errors on;
+#            error_page 500 502 503 504 404 @fallback;
 
        } 
 #      location @fallback {
@@ -260,7 +260,7 @@ CURRENT_PATH=""
 echo '    }
 
 }
- ' ) | tee /etc/nginx/nginx.conf |nl 2>&1   |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
+ ' ) |grep -v '^#'| tee /etc/nginx/nginx.conf |nl 2>&1   |sed 's/#.\+//g;'| grep -v "^$"|grep -e ';' -e '{' -e '}'
 ###  ^^ show config      with lines ^
 
 
