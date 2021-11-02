@@ -111,12 +111,15 @@ CURRENT_PATH=""
 [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'            
 } 
 
+
 [[ ! -z "${REPLACESTRING}"  ]] && {
+echo '
+            sub_filter_once off;
+            sub_filter_types text/html text/css application/javascript;'
 for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
-      echo 'sub_filter_once off;
-            sub_filter_types text/html text/css application/javascript;
+echo '
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
@@ -232,11 +235,13 @@ CURRENT_PATH=""
 } 
 
 [[ ! -z "${REPLACESTRING}"  ]] && {
+echo '
+            sub_filter_once off;
+            sub_filter_types text/html text/css application/javascript;'
 for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
 SEARCH=${CURRSTRING/:*/}
 NEWTXT=${CURRSTRING/*:/}
-      echo 'sub_filter_once off;
-            sub_filter_types text/html text/css application/javascript;
+echo '
             sub_filter "'$SEARCH'" "'$NEWTXT'";'
 done
 }
