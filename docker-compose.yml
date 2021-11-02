@@ -34,8 +34,8 @@ services:
     image: nginx:alpine
     container_name: ${VIRTUAL_HOST}
     hostname: ${VIRTUAL_HOST}
-#  ports:
-#    - "8888:80"
+  ports:
+    - "127.0.0.1:{LOCALPORT:-65080}:80"
     command:
       - "/bin/ash"
       - "-c"
