@@ -210,8 +210,17 @@ CURRENT_PATH=""
             proxy_set_header       X-Real-IP        "10.254.254.254";
             proxy_set_header       cfip             "10.254.254.254";';
 
-[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404;'
-[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502;'
+# custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404;' ## trailing slash
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'      
+}
+
+
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502;' ## trailing slash
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'            
+} 
 
  echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
 #            proxy_cache_valid 500 502 503 504 14m;
