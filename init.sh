@@ -98,8 +98,10 @@ CURRENT_PATH=""
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
+
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo 'error_page 404 /err_404;'
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo 'error_page 502 /err_502;'
+
 
 [[ "${HIDECLIENT}" = "true" ]] ||  echo ' 
             proxy_set_header       CF-Connecting-IP "$cfip";
@@ -251,9 +253,9 @@ CURRENT_PATH=""
         echo ' }' ; } ;
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
-        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 8.8.8.8 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 [[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 8.8.8.8 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
+        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } ' 
 
 
 ### below we close http and server section
