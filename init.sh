@@ -5,15 +5,15 @@ apk add --no-cache  nginx-mod-http-echo bash iproute2  openssl      #varnish ;
 ##apk add --no-cache  git ;go get github.com/vektra/templar/cmd/templar 
 echo > /etc/nginx/nginx.conf &>/dev/null &
 
-[[ -z ${CACHEMB}   ]] && CACHEMB=512
-[[ -z ${CACHETIME} ]] && CACHETIME=15m
-[[ -z ${TIMEOUT}   ]] && TIMEOUT=5s
+[[ -z ${CACHEMB}   ]]      && CACHEMB=512
+[[ -z ${CACHETIME} ]]      && CACHETIME=15m
+[[ -z ${TIMEOUT}   ]]      && TIMEOUT=5s
 [[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
 
-[[ -z ${CACHED_PATH} ]] && CACHED_PATH=/;
-[[ -z ${CACHED_HOST} ]] && CACHED_HOST=dnnd.de;
-[[ -z ${CACHED_PROTO} ]] && CACHED_PROTO=https;
-[[ -z ${VIRTUAL_HOST} ]] && VIRTUAL_HOST=nginx-cache-proxy.lan;
+[[ -z ${CACHED_PATH} ]]    && CACHED_PATH=/;
+[[ -z ${CACHED_HOST} ]]    && CACHED_HOST=dnnd.de;
+[[ -z ${CACHED_PROTO} ]]   && CACHED_PROTO=https;
+[[ -z ${VIRTUAL_HOST} ]]   && VIRTUAL_HOST=nginx-cache-proxy.lan;
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
 echo "#############+++init nginx cache+++#########"
 ( echo '
