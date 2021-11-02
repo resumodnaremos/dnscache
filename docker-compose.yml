@@ -35,7 +35,7 @@ services:
     container_name: ${VIRTUAL_HOST}
     hostname: ${VIRTUAL_HOST}
     ports:
-      - "127.0.0.1:{LOCALPORT:-65080}:80"
+      - "127.0.0.1:${LOCALPORT:-65080}:80/tcp"
     command:
       - "/bin/ash"
       - "-c"
