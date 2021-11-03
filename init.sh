@@ -187,7 +187,7 @@ done
 #            proxy_cache_valid any      14m;
 #            proxy_cache_use_stale  error timeout invalid_header updating  http_500 http_502 http_503 http_504;
 ##            proxy_cache_valid 500 502 503 504 14m;
-            proxy_intercept_errors on;
+#            proxy_intercept_errors on;
 #      }
         ' ; } ;
         done
