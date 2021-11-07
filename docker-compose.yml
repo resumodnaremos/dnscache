@@ -18,7 +18,7 @@ services:
     environment:
       CACHETIME: ${CACHETIME:-15m}
       CACHED_PATH: ${CACHED_PATH:-/}
-      CACHED_PROTO: ${CACHED_PROTO:https}
+      CACHED_PROTO: ${CACHED_PROTO:-https}
       CACHED_HOST: ${CACHED_HOST:-ietf.org}
 
 #    env_file:
