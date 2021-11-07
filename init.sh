@@ -81,10 +81,13 @@ echo
             real_ip_recursive on;
             keepalive_timeout 10m;
             root   /var/www/html ;
-            proxy_cache            STATIC;
-            proxy_cache_valid      200  '${CACHETIME}';
-            expires '${EXPIREHEADER}';
-            add_header Cache-Control "public" ; } ';
+            error_log /dev/stderr
+            #proxy_cache            STATIC;
+            #proxy_cache_valid      200  '${CACHETIME}';
+            expires '${EXPIREHEADER}';'
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout static;' ;
+[[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
+echo        'add_header Cache-Control "public" ; } ';
 done
 CURRENT_PATH=""
  [[ ! -z "$CACHED_PATH" ]]  &&   for CURRENT_PATH in $(echo $CACHED_PATH|sed 's/,/\n/g;s/^ //g;s/ $//g');do
