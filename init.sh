@@ -323,10 +323,36 @@ done
         echo ' }' ; } ;
 
 
-[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && echo '
-        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } '
-[[ ! -z "${CUSTOMFOUROFOUR}" ]] && echo '
-        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;proxy_hide_header       Cookie; } '
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] &&  { echo '
+        location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;'
+        [[ ! -z "${REPLACESTRING}"  ]] && {
+        echo '
+                    sub_filter_once off;
+                    sub_filter_types text/html text/css application/javascript text/xml;'
+        for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+        SEARCH=${CURRSTRING/:*/}
+        NEWTXT=${CURRSTRING/*:/}
+        echo '
+                    proxy_set_header Accept-Encoding "";
+                    sub_filter "'$SEARCH'" "'$NEWTXT'";'
+        done
+        }
+        echo 'proxy_hide_header       Cookie; } ' ; } ;
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && { echo '
+        location /err_404 {  proxy_pass '${CUSTOMFOUROFOUR}' ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;'
+        [[ ! -z "${REPLACESTRING}"  ]] && {
+        echo '
+                    sub_filter_once off;
+                    sub_filter_types text/html text/css application/javascript text/xml;'
+        for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+        SEARCH=${CURRSTRING/:*/}
+        NEWTXT=${CURRSTRING/*:/}
+        echo '
+                    proxy_set_header Accept-Encoding "";
+                    sub_filter "'$SEARCH'" "'$NEWTXT'";'
+        done
+        }
+        echo 'proxy_hide_header       Cookie; } ' ; } ;
 
 
 ### below we close http and server section
