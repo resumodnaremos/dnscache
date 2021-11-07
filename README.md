@@ -1,13 +1,23 @@
 # Docker Cache Nuster
 
-flexible and extreme fast https  cache using nuster and nginx 
+flexible and extreme fast https  cache using nuster and nginx
 
+
+hook it intoo you webserver network ,
+* it will cache only CACHED_PATH (comma separated list) to CACHED_HOST
+* optionally set the `Host:` Header to CACHED_HOST_HEADER
+* unless you specify STATIC_PATH (comma separated list) all non-cached requests will be sent to upstream
+* if STATIC_PATH is set , then nginx will serve the static files from WEBROOT (or whatever is in the container under /var/www/html/)
+* ( remember to chmod a+r for those assets under /var/www/html or allow UID/GID 101)
 
 ## OPTION A - having a spare domain/bypassing ingress proxy
 * when the cache container "sees" a webserver that's not redirecting , you go straight trough nginx->nuster->upstream
 
 ## OPTION B - LOOP-BREAKING
 * since the proxy has to get the real files and "the others" not , you might use the following .htaccess snippet
+
+
+
 ```
 RewriteEngine On
 ###only rewrite if there is no cf-connecting-ip

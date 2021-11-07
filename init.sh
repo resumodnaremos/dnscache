@@ -20,6 +20,8 @@ echo > /etc/nginx/nginx.conf &>/dev/null &
 
 [[ -z ${CACHED_PATH}    ]] && CACHED_PATH=/;
 [[ -z ${CACHED_HOST}    ]] && CACHED_HOST=dnnd.de;
+[[ -z ${CACHED_HOST_HEADER}    ]] && CACHED_HOST_HEADER=${CACHED_HOST};
+
 [[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
 [[ -z ${VIRTUAL_HOST}   ]] && VIRTUAL_HOST=nginx-cache-proxy.lan;
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
@@ -99,14 +101,12 @@ CURRENT_PATH=""
             proxy_connect_timeout  5s;
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
-            proxy_set_header       Host '${CACHED_HOST}' ;
+            proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
-#            proxy_ignore_headers    Cookie;
-
+#            proxy_ignore_headers    Cookie Set-Cookie;
 #            proxy_hide_header       Set-Cookie;
-#            proxy_ignore_headers    Set-Cookie;
 #            proxy_pass             http://127.0.0.1:1234 ; ## varnish
 #            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
             proxy_cache            STATIC;
