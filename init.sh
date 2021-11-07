@@ -321,8 +321,10 @@ done
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
         echo ' }' ; } ;
 
+
+## else we redirect, but not to the blank hostname , we respect CACHED_HOST_HEADER to be the real one
 [[ ! "${CACHED_PATH}" = "/" ]] && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
-        echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'$request_uri ; error_log /dev/stderr ;';
+        echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST_HEADER}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
         echo ' }' ; } ;
