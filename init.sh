@@ -87,6 +87,11 @@ echo
             expires '${EXPIREHEADER}';'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout static;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
+# custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404/;' ## trailing slash
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404;'
+}
 echo        'add_header Cache-Control "public" ; } ';
 done
 CURRENT_PATH=""
