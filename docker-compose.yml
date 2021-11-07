@@ -9,15 +9,18 @@ services:
     dns:
       - "${DNSONE:-1.1.1.1}"
       - "${DNSTWO:-9.9.9.9}"
-    volumes: 
+    volumes:
       - ./nuster.cfg:/nuster.template:ro
       - ./init-nuster.sh:/init-nuster.sh:ro
     command:
       - "/bin/bash"
       - "/init-nuster.sh"
     environment:
+      CACHETIME: ${CACHETIME:-15m}
       CACHED_PATH: ${CACHED_PATH:-/}
+      CACHED_PROTO: ${CACHED_PROTO:https}
       CACHED_HOST: ${CACHED_HOST:-ietf.org}
+
 #    env_file:
 #      - .env
     logging:
@@ -28,7 +31,7 @@ services:
     sysctls:
       net.core.somaxconn: 1024
 
-   
+
   cache:
     restart: unless-stopped
     image: nginx:alpine
