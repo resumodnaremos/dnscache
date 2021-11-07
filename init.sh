@@ -81,7 +81,7 @@ echo
             real_ip_recursive on;
             keepalive_timeout 10m;
             root   /var/www/html ;
-            error_log /dev/stderr
+            error_log /dev/stderr;
             #proxy_cache            STATIC;
             #proxy_cache_valid      200  '${CACHETIME}';
             expires '${EXPIREHEADER}';'
