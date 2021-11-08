@@ -17,7 +17,6 @@ echo > /etc/nginx/nginx.conf &>/dev/null &
 [[ -z ${CACHETIME}      ]] && CACHETIME=15m
 [[ -z ${TIMEOUT}        ]] && TIMEOUT=5s
 [[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
-
 [[ -z ${CACHED_PATH}    ]] && CACHED_PATH=/;
 [[ -z ${CACHED_HOST}    ]] && CACHED_HOST=dnnd.de;
 [[ -z ${CACHED_HOST_HEADER}    ]] && CACHED_HOST_HEADER=${CACHED_HOST};
@@ -56,10 +55,12 @@ map $http_cf_connecting_ip $cfip {
       server_name _ ;
       location /this_proxy_is_online { default_type text/plain;   root /dev/shm/.okresponse/ ;error_log /dev/stderr ; access_log off ; }
       location /nginx_status         { stub_status; access_log off; allow 127.0.0.1; deny all ; }'
-      ## if  REDIRECT_FAVICON is a url
-      echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
+## if  REDIRECT_FAVICON is a url
+echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
 
 [[ "${REDIRECT_FAVICON}" = "true"  ]]  &&   echo 'location /favicon.ico  {        return 301 '${CACHED_PROTO}'://'${CACHED_HOST}'/favicon.ico ; error_log /dev/stderr ;access_log off; }'
+
+
 
 [[ ! -z "${REPLACESTRING}"  ]] && {
 echo '
@@ -113,13 +114,15 @@ CURRENT_PATH=""
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
             proxy_hide_header       Cookie;
+#            proxy_ignore_headers    Pragma Cache-Control;
+
 #            proxy_ignore_headers    Cookie Set-Cookie;
 #            proxy_hide_header       Set-Cookie;
 #            proxy_pass             http://127.0.0.1:1234 ; ## varnish
 #            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
             proxy_cache            STATIC;
             proxy_cache_valid      200  '${CACHETIME}';
-            expires '${EXPIREHEADER}';
+            expires '${CACHETIME}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
 #            proxy_set_header       X-Templar-Cache 'fallback' ;
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
