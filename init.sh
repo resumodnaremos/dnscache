@@ -352,7 +352,7 @@ done
             proxy_connect_timeout  5s;
             proxy_send_timeout  8s;
             proxy_read_timeout  10s;
-            proxy_set_header       Host '${CURRENT_HOST}' ;
+            proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             '${CACHED_PROTO}'://'${CURRENT_HOST}' ;
             proxy_hide_header       Cookie;
