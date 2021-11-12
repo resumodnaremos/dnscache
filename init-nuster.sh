@@ -11,8 +11,9 @@
 [[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
 
 test -e /nuster.template && ( cat /nuster.template | sed 's/TIMEOUT/'${TIMEOUT}'/g;s/CACHEMB/'${CACHEMB}'/g;s/CACHETIME/'${CACHETIME}'/g;s/UPSTREAM/'${CACHED_HOST}'/g'  >  /etc/nuster/nuster.cfg  )
-
 [[ "$CACHED_PROTO" = "http" ]] && { echo  "HTTP (NO SSL ) UPSTREAM DETECTED" ; sed 's/:443 ssl verify none//g'  /etc/nuster/nuster.cfg -i ; };
+
+test -e /nuster-fixedconfig && { cat /nuster-fixedconfig | wc -l |grep -v ^0$ && { echo "overwriting from /nuster-fixedconfig" ;cat /nuster-fixedconfig > /etc/nuster/nuster.cfg ; } ;  } ;
 test -e /etc/nuster/nuster.cfg || echo "NO CONFIG"
 cat  /etc/nuster/nuster.cfg |wc -l |grep ^0$ -q && echo "EMPTY CONFIG"
 cat  /etc/nuster/nuster.cfg |wc -l |grep ^0$ -q || nl /etc/nuster/nuster.cfg
