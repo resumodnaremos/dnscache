@@ -109,7 +109,7 @@ CURRENT_PATH=""
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  25s;
+            proxy_connect_timeout  13s;
             proxy_send_timeout  10s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
@@ -223,7 +223,7 @@ CURRENT_PATH=""
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  25s;
+            proxy_connect_timeout  13s;
             proxy_send_timeout  10s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CURRENT_HOST}' ;
@@ -349,7 +349,7 @@ done
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  25s;
+            proxy_connect_timeout  13s;
             proxy_send_timeout  10s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
