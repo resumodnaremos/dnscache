@@ -109,9 +109,9 @@ CURRENT_PATH=""
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  5s;
-            proxy_send_timeout  8s;
-            proxy_read_timeout  10s;
+            proxy_connect_timeout  25s;
+            proxy_send_timeout  10s;
+            proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             http://cache.'${VIRTUAL_HOST}':8000 ;
@@ -223,9 +223,9 @@ CURRENT_PATH=""
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  5s;
-            proxy_send_timeout  8s;
-            proxy_read_timeout  10s;
+            proxy_connect_timeout  25s;
+            proxy_send_timeout  10s;
+            proxy_read_timeout  25s;
             proxy_set_header       Host '${CURRENT_HOST}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             '${CACHED_PROTO}'://'${CURRENT_HOST}' ;
@@ -349,9 +349,9 @@ done
             real_ip_header    X-Forwarded-For;
             real_ip_recursive on;
             keepalive_timeout 10m;
-            proxy_connect_timeout  5s;
-            proxy_send_timeout  8s;
-            proxy_read_timeout  10s;
+            proxy_connect_timeout  25s;
+            proxy_send_timeout  10s;
+            proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
             proxy_pass             '${CACHED_PROTO}'://'${CURRENT_HOST}' ;
