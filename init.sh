@@ -24,6 +24,7 @@ ROOTSET="false"
 
 [[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
 [[ -z ${VIRTUAL_HOST}   ]] && VIRTUAL_HOST=nginx-cache-proxy.lan;
+[[ -z ${PROXY_ROOT}     ]] && PROXY_ROOT=false
 mkdir -p /dev/shm/nginx-{static,backup}-cache /run/nginx/
 echo "#############+++init nginx cache+++#########"
 ( echo '
@@ -319,7 +320,7 @@ done
         done
 
 ## if we cache more than the root path and RETURN_UNAUTH is set , reject everyhting except one path and favicon
-[[ ! "${CACHED_PATH}" = "/" ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
+[[ ! "${CACHED_PATH}" = "/" ]] && PROXY_ROOT=false && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 403 ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
@@ -328,7 +329,7 @@ done
 
 
 ## else we redirect, but not to the blank hostname , we respect CACHED_HOST_HEADER to be the real one
-[[ ! "${CACHED_PATH}" = "/" ]] && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
+[[ ! "${CACHED_PATH}" = "/" ]] && PROXY_ROOT=false && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST_HEADER}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
@@ -338,7 +339,7 @@ done
 
 ## now if we do not have a valid root yet, proxy all the rest
 [[ "${ROOTSET}" = "false" ]] && { CURRENT_PATH="/";CURRENT_HOST=${CACHED_HOST};
-    
+
  {      echo 'location '${CURRENT_PATH}' {
             set_real_ip_from  10.0.0.0/8     ;
             set_real_ip_from  192.168.0.0/16 ;
@@ -442,16 +443,16 @@ done
 ##            proxy_intercept_errors on;
 #      }
         ' ; }
-    
-    
-    
-    
-    
-    
-    
-    };
 
 
+
+
+
+
+
+    echo  ; };
+
+### custom pages
 
 [[ ! -z "${CUSTOMFIVEOTWO}"  ]] &&  { echo '
         location /err_502 {  proxy_pass '${CUSTOMFIVEOTWO}'  ;resolver 1.1.1.1 9.9.9.9 valid=90s;error_log /dev/stderr ;access_log off;'
