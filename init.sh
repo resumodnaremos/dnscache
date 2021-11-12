@@ -130,7 +130,7 @@ CURRENT_PATH=""
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
             proxy_buffering        off;
             error_log              /dev/stderr ;'
-[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cached;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
 
