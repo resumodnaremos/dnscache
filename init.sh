@@ -320,7 +320,7 @@ done
         done
 
 ## if we cache more than the root path and RETURN_UNAUTH is set , reject everyhting except one path and favicon
-[[ ! "${CACHED_PATH}" = "/" ]] && PROXY_ROOT=false && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
+[[ ! "${CACHED_PATH}" = "/" ]] && [[ "${PROXY_ROOT}" = "false"   ]] && [[ "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 403 ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
@@ -329,7 +329,7 @@ done
 
 
 ## else we redirect, but not to the blank hostname , we respect CACHED_HOST_HEADER to be the real one
-[[ ! "${CACHED_PATH}" = "/" ]] && PROXY_ROOT=false && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
+[[ ! "${CACHED_PATH}" = "/" ]] && [[ "${PROXY_ROOT}" = "false"   ]]  && [[ ! "${RETURN_UNAUTH}" = "true"   ]] && {
         echo ' location / { return 301 '${CACHED_PROTO}'://'${CACHED_HOST_HEADER}'$request_uri ; error_log /dev/stderr ;';
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo -n ' access_log             /dev/stdout upstream;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo -n ' access_log off;' ;
