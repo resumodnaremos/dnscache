@@ -337,7 +337,7 @@ done
         echo ' }' ; } ;
 
 
-## now if we do not have a valid root yet, proxy all the rest
+## now if we do not have a valid root yet, proxy all the rest (set PROXY_ROOT ... )
 [[ "${ROOTSET}" = "false" ]] && { CURRENT_PATH="/";CURRENT_HOST=${CACHED_HOST};
 
  {      echo 'location '${CURRENT_PATH}' {
