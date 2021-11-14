@@ -20,6 +20,7 @@ ROOTSET="false"
 [[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
 [[ -z ${CACHED_PATH}    ]] && CACHED_PATH=/;
 [[ -z ${CACHED_HOST}    ]] && CACHED_HOST=dnnd.de;
+[[ -z ${CACHED_HOST_POST}    ]] && ${CACHED_HOST};
 [[ -z ${CACHED_HOST_HEADER}    ]] && CACHED_HOST_HEADER=${CACHED_HOST};
 
 [[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
@@ -47,6 +48,22 @@ map $http_xcachegetrequest $xcache {
 map $http_cf_connecting_ip $cfip {
     default   $http_cf_connecting_ip;
     ""        "127.0.0.1";
+}
+### 2 mappings for caching post only (ssl backend , non-ssl cache)
+map $request_method $upstream_location {
+  # PUT     example.com:8081;
+   POST    cache.'${VIRTUAL_HOST}':8000 ;
+  #PATCH   example.com:8081;
+   default '${CACHED_HOST}';
+}
+
+map $request_method $upstream_proto {
+    #GET     webdav_download;
+    #HEAD    webdav_download;
+    #PUT     webdav_upload;
+    #LOCK    webdav_upload;
+    POST    http;
+    default https;
 }
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
@@ -204,6 +221,116 @@ done
 #      }
         ' ; } ;
         done
+
+## requests where we cache only POST mehod
+
+[[ ! -z "$CACHED_PATH_POSTONLY" ]]  &&   for CURRENT_PATH in $(echo $CACHED_PATH_POSTONLY|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+[[ "${CURRENT_PATH}" = "/" ]] && ROOTSET="true";
+ {      echo 'location '${CURRENT_PATH}' {
+            set_real_ip_from  10.0.0.0/8     ;
+            set_real_ip_from  192.168.0.0/16 ;
+            set_real_ip_from  172.16.0.0/12  ;
+            set_real_ip_from  fe80::/64      ;
+            set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA)
+            real_ip_header    X-Forwarded-For;
+            real_ip_recursive on;
+            keepalive_timeout 10m;
+            proxy_connect_timeout  13s;
+            proxy_send_timeout  10s;
+            proxy_read_timeout  25s;
+            proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
+            proxy_set_header       Xcachegetrequest "$xcache";
+            proxy_pass $upstream_proto://$upstream_location;
+            proxy_hide_header       Cookie;
+#            proxy_ignore_headers    Pragma Cache-Control;
+
+#            proxy_ignore_headers    Cookie Set-Cookie;
+#            proxy_hide_header       Set-Cookie;
+#            proxy_pass             http://127.0.0.1:1234 ; ## varnish
+#            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
+            proxy_cache            STATIC;
+            proxy_cache_valid      200  '${CACHETIME}';
+            expires '${CACHETIME}';
+#            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
+#            proxy_set_header       X-Templar-Cache 'fallback' ;
+#            proxy_set_header       X-Templar-CacheFor '15m' ;
+            proxy_buffering        off;
+            error_log              /dev/stderr ;'
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cached;' ;
+[[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
+
+
+# custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
+[[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404/;' ## trailing slash
+[[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404;'
+}
+
+
+[[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502/;' ## trailing slash
+[[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502;'
+}
+
+
+[[ "${HIDECLIENT}" = "true" ]] ||  echo '
+            proxy_set_header       CF-Connecting-IP "$cfip";
+            proxy_set_header       X-Forwarded-For  "$cfip";' ;
+[[ "${HIDECLIENT}" = "true" ]] &&  echo '
+            proxy_set_header        "User-Agent" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/91.0";
+            proxy_set_header       CF-Connecting-IP "10.254.254.254";
+            proxy_set_header       X-Forwarded-For  "10.254.254.254";
+            proxy_set_header       X-Real-IP        "10.254.254.254";
+            proxy_set_header       cfip             "10.254.254.254";';
+
+[[ ! -z "${REPLACESTRING}"  ]] && {
+echo '
+            sub_filter_once off;
+            sub_filter_types text/html text/css application/javascript text/xml;'
+for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+SEARCH=${CURRSTRING/:*/}
+NEWTXT=${CURRSTRING/*:/}
+echo '
+            proxy_set_header Accept-Encoding "";
+            sub_filter "'$SEARCH'" "'$NEWTXT'";'
+done
+}
+
+ echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
+#            proxy_cache_valid 500 502 503 504 14m;
+#            proxy_cache_valid 500 502 503 504 14m;
+             proxy_intercept_errors on;
+#            error_page 500 502 503 504 404 @fallback;
+
+       }
+#      location @fallback {
+#            access_log             /dev/stdout fallback;
+#    keepalive_timeout 10m;
+#    proxy_connect_timeout  2s;
+#    proxy_send_timeout  5s;
+#    proxy_read_timeout  6s;
+#            proxy_hide_header Cookie;
+##            stub_status;
+#            access_log off;
+##            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
+#            proxy_pass            http://'${CACHED_HOST}' ;
+#            error_log              /dev/stderr ;
+#            proxy_set_header       Host '${CACHED_HOST}' ;
+#            proxy_buffering        on;
+#            error_log              /dev/stderr ;
+#            access_log             /dev/stdout fallback;
+#            proxy_cache            STATIC;
+#            proxy_cache_valid 200 302 15m;
+##            proxy_cache_valid 500 502 503 504 14m;
+#            proxy_cache_valid 301      1h;
+#            proxy_cache_valid any      14m;
+#            proxy_cache_use_stale  error timeout invalid_header updating  http_500 http_502 http_503 http_504;
+##            proxy_cache_valid 500 502 503 504 14m;
+#            proxy_intercept_errors on;
+#      }
+        ' ; } ;
+        done
+
 
 # special endpoints cached only by nginx
 

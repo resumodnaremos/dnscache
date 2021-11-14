@@ -12,6 +12,7 @@ services:
     volumes:
       - ./nuster.cfg:/nuster.template:ro
       - ./init-nuster.sh:/init-nuster.sh:ro
+      - ${NUSTER_FIXED_CONFIG:-/dev/shm/.nusterfixedconfigdummy}:/nuster-fixedconfig
     command:
       - "/bin/bash"
       - "/init-nuster.sh"
