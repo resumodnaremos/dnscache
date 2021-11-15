@@ -343,7 +343,6 @@ done
         CURRENT_PATH=""
          [[ ! -z "$UNCACHEDENDPOINTS" ]]  &&   for CURRENT_ENDPOINT in $(echo $UNCACHEDENDPOINTS|sed 's/,/\n/g;s/^ //g;s/ $//g');do
          CURRENT_PATH=${CURRENT_ENDPOINT/:*/}
-         CURRENT_HOST=${CURRENT_ENDPOINT/*:/}
         [[ "${CURRENT_PATH}" = "/" ]] && ROOTSET="true";
 
          {      echo 'location '${CURRENT_PATH}' {
@@ -358,9 +357,9 @@ done
                     proxy_connect_timeout  13s;
                     proxy_send_timeout  90s;
                     proxy_read_timeout  25s;
-                    proxy_set_header       Host '${CURRENT_HOST}' ;
+                    proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
                     proxy_set_header       Xcachegetrequest "$xcache";
-                    proxy_pass             '${CACHED_PROTO}'://'${CURRENT_HOST}' ;
+                    proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
                     proxy_hide_header       Cookie;
         #            proxy_ignore_headers    Cookie;
 
