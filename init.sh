@@ -337,6 +337,120 @@ done
         done
 
 
+        # special endpoints NOT cached  by nginx
+
+
+        CURRENT_PATH=""
+         [[ ! -z "$UNCACHEDENDPOINTS" ]]  &&   for CURRENT_ENDPOINT in $(echo $UNCACHEDENDPOINTS|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+         CURRENT_PATH=${CURRENT_ENDPOINT/:*/}
+         CURRENT_HOST=${CURRENT_ENDPOINT/*:/}
+        [[ "${CURRENT_PATH}" = "/" ]] && ROOTSET="true";
+
+         {      echo 'location '${CURRENT_PATH}' {
+                    set_real_ip_from  10.0.0.0/8     ;
+                    set_real_ip_from  192.168.0.0/16 ;
+                    set_real_ip_from  172.16.0.0/12  ;
+                    set_real_ip_from  fe80::/64      ;
+                    set_real_ip_from  fc00::/7       ; # RFC 4193 Unique Local Addresses (ULA)
+                    real_ip_header    X-Forwarded-For;
+                    real_ip_recursive on;
+                    keepalive_timeout 10m;
+                    proxy_connect_timeout  13s;
+                    proxy_send_timeout  90s;
+                    proxy_read_timeout  25s;
+                    proxy_set_header       Host '${CURRENT_HOST}' ;
+                    proxy_set_header       Xcachegetrequest "$xcache";
+                    proxy_pass             '${CACHED_PROTO}'://'${CURRENT_HOST}' ;
+                    proxy_hide_header       Cookie;
+        #            proxy_ignore_headers    Cookie;
+
+        #            proxy_hide_header       Set-Cookie;
+        #            proxy_ignore_headers    Set-Cookie;
+        #            proxy_pass             http://127.0.0.1:1234 ; ## varnish
+        #            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
+                    #proxy_cache            STATIC;
+                    #proxy_cache_valid      200  '${CACHETIME}';
+                    #expires '${EXPIREHEADER}';
+        #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
+        #            proxy_set_header       X-Templar-Cache 'fallback' ;
+        #            proxy_set_header       X-Templar-CacheFor '15m' ;
+                    proxy_buffering        off;
+                    error_log              /dev/stderr ;'
+        [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
+        [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
+
+        [[ "${HIDECLIENT}" = "true" ]] ||  echo '
+                    proxy_set_header       CF-Connecting-IP "$cfip";
+                    proxy_set_header       X-Forwarded-For  "$cfip";' ;
+        [[ "${HIDECLIENT}" = "true" ]] &&  echo '
+                    proxy_set_header        "User-Agent" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/91.0";
+                    proxy_set_header       CF-Connecting-IP "10.254.254.254";
+                    proxy_set_header       X-Forwarded-For  "10.254.254.254";
+                    proxy_set_header       X-Real-IP        "10.254.254.254";
+                    proxy_set_header       cfip             "10.254.254.254";';
+
+        [[ ! -z "${REPLACESTRING}"  ]] && {
+        echo '
+                    sub_filter_once off;
+                    sub_filter_types text/html text/css application/javascript text/xml;'
+        for CURRSTRING in $(echo $REPLACESTRING|sed 's/,/\n/g;s/^ //g;s/ $//g');do
+        SEARCH=${CURRSTRING/:*/}
+        NEWTXT=${CURRSTRING/*:/}
+        echo '
+                    proxy_set_header Accept-Encoding "";
+                    sub_filter "'$SEARCH'" "'$NEWTXT'";'
+        done
+        }
+
+        # custom errors , if the parameter of the error pages ends in / we proxy error_page to a directory to have images etc.
+        [[ ! -z "${CUSTOMFOUROFOUR}" ]] && {
+        [[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] && echo 'error_page 404 /err_404;' ## trailing slash
+        [[ "${CUSTOMFOUROFOUR}" =~ \.*/$ ]] || echo 'error_page 404 /err_404/;'
+        }
+
+
+        [[ ! -z "${CUSTOMFIVEOTWO}"  ]] && {
+        [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] && echo 'error_page 502 /err_502;' ## trailing slash
+        [[ "${CUSTOMFIVEOTWO}" =~ \.*/$ ]] || echo 'error_page 502 /err_502/;'
+        }
+
+
+
+         echo  '     proxy_cache_use_stale  error timeout invalid_header updating http_500 http_502 http_503 http_504;
+        #            proxy_cache_valid 500 502 503 504 14m;
+        #            proxy_cache_valid 500 502 503 504 14m;
+                    proxy_intercept_errors on;
+        #            error_page 500 502 503 504 404 @fallback;
+
+               }
+        #      location @fallback {
+        #            access_log             /dev/stdout fallback;
+        #    keepalive_timeout 10m;
+        #    proxy_connect_timeout  2s;
+        #    proxy_send_timeout  5s;
+        #    proxy_read_timeout  6s;
+        #            proxy_hide_header Cookie;
+        ##            stub_status;
+        #            access_log off;
+        ##            proxy_pass             '${CACHED_PROTO}'://'${CACHED_HOST}' ;
+        #            proxy_pass            http://'${CACHED_HOST}' ;
+        #            error_log              /dev/stderr ;
+        #            proxy_set_header       Host '${CACHED_HOST}' ;
+        #            proxy_buffering        on;
+        #            error_log              /dev/stderr ;
+        #            access_log             /dev/stdout fallback;
+        #            proxy_cache            STATIC;
+        #            proxy_cache_valid 200 302 15m;
+        ##            proxy_cache_valid 500 502 503 504 14m;
+        #            proxy_cache_valid 301      1h;
+        #            proxy_cache_valid any      14m;
+        #            proxy_cache_use_stale  error timeout invalid_header updating  http_500 http_502 http_503 http_504;
+        ##            proxy_cache_valid 500 502 503 504 14m;
+        ##            proxy_intercept_errors on;
+        #      }
+                ' ; } ;
+                done
+
 # special endpoints cached only by nginx
 
 
