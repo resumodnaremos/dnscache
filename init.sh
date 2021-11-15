@@ -148,8 +148,7 @@ CURRENT_PATH=""
             proxy_cache_valid      200  '${CACHETIME}';
             expires '${CACHETIME}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
-#            proxy_set_header       X-Templar-Cache 'fallback' ;
-#            proxy_set_header       X-Templar-CacheFor '15m' ;
+
             proxy_buffering        off;
             error_log              /dev/stderr ;'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cached;' ;
@@ -257,8 +256,7 @@ done
             proxy_cache_valid      200  '${CACHETIME}';
             expires '${CACHETIME}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
-#            proxy_set_header       X-Templar-Cache 'fallback' ;
-#            proxy_set_header       X-Templar-CacheFor '15m' ;
+
             proxy_buffering        off;
             error_log              /dev/stderr ;'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cachedps ;' ;
@@ -371,9 +369,7 @@ done
                     #proxy_cache_valid      200  '${CACHETIME}';
                     #expires '${EXPIREHEADER}';
         #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
-        #            proxy_set_header       X-Templar-Cache 'fallback' ;
-        #            proxy_set_header       X-Templar-CacheFor '15m' ;
-                    proxy_buffering        off;
+                                    proxy_buffering        off;
                     error_log              /dev/stderr ;'
         [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout nocache;' ;
         [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
@@ -485,8 +481,7 @@ CURRENT_PATH=""
             proxy_cache_valid      200  '${CACHETIME}';
             expires '${EXPIREHEADER}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
-#            proxy_set_header       X-Templar-Cache 'fallback' ;
-#            proxy_set_header       X-Templar-CacheFor '15m' ;
+
             proxy_buffering        off;
             error_log              /dev/stderr ;'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
@@ -611,8 +606,7 @@ done
             proxy_cache_valid      200  '${CACHETIME}';
             expires '${EXPIREHEADER}';
 #            proxy_cache_use_stale  error http_502 http_503 http_504 timeout ;
-#            proxy_set_header       X-Templar-Cache 'fallback' ;
-#            proxy_set_header       X-Templar-CacheFor '15m' ;
+
             proxy_buffering        off;
             error_log              /dev/stderr ;'
 [[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout upstream;' ;
