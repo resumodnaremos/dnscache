@@ -14,13 +14,13 @@ ls /etc/nginx/modules/*.conf -1
 echo > /etc/nginx/nginx.conf &>/dev/null &
 ROOTSET="false"
 
-[[ -z ${CACHEMB}        ]] && CACHEMB=512
-[[ -z ${CACHETIME}      ]] && CACHETIME=15m
-[[ -z ${TIMEOUT}        ]] && TIMEOUT=5s
-[[ -z ${EXPIREHEADER}   ]] && EXPIREHEADER=12h;
-[[ -z ${CACHED_PATH}    ]] && CACHED_PATH=/;
-[[ -z ${CACHED_HOST}    ]] && CACHED_HOST=dnnd.de;
-[[ -z ${CACHED_HOST_POST}    ]] && ${CACHED_HOST};
+[[ -z ${CACHEMB}               ]] && CACHEMB=512
+[[ -z ${CACHETIME}             ]] && CACHETIME=15m
+[[ -z ${TIMEOUT}               ]] && TIMEOUT=5s
+[[ -z ${EXPIREHEADER}          ]] && EXPIREHEADER=12h;
+[[ -z ${CACHED_PATH}           ]] && CACHED_PATH=/;
+[[ -z ${CACHED_HOST}           ]] && CACHED_HOST=dnnd.de;
+[[ -z ${CACHED_HOST_POST}      ]] && ${CACHED_HOST};
 [[ -z ${CACHED_HOST_HEADER}    ]] && CACHED_HOST_HEADER=${CACHED_HOST};
 
 [[ -z ${CACHED_PROTO}   ]] && CACHED_PROTO=https;
@@ -45,6 +45,7 @@ map $http_xcachegetrequest $xcache {
     default   $http_xcachegetrequest;
     ""        "UNCACHED";
 }
+## a mapping for the user ip
 map $http_cf_connecting_ip $cfip {
     default   $http_cf_connecting_ip;
     ""        "127.0.0.1";
@@ -64,6 +65,10 @@ map $request_method $upstream_proto {
     #LOCK    webdav_upload;
     POST    http;
     default https;
+}
+map $request_method $cached_reqtype {
+  POST cachedps;
+   GET upstream;
 }
     include /etc/nginx/mime.types; # This includes the built in mime types
     include /logformats.conf;
@@ -127,7 +132,7 @@ CURRENT_PATH=""
             real_ip_recursive on;
             keepalive_timeout 10m;
             proxy_connect_timeout  13s;
-            proxy_send_timeout  10s;
+            proxy_send_timeout  90s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
@@ -236,7 +241,7 @@ done
             real_ip_recursive on;
             keepalive_timeout 10m;
             proxy_connect_timeout  13s;
-            proxy_send_timeout  10s;
+            proxy_send_timeout  90s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
@@ -256,7 +261,7 @@ done
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
             proxy_buffering        off;
             error_log              /dev/stderr ;'
-[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cachedps;' ;
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout $cached_reqtype;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
 
@@ -351,7 +356,7 @@ CURRENT_PATH=""
             real_ip_recursive on;
             keepalive_timeout 10m;
             proxy_connect_timeout  13s;
-            proxy_send_timeout  10s;
+            proxy_send_timeout  90s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CURRENT_HOST}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
@@ -477,7 +482,7 @@ done
             real_ip_recursive on;
             keepalive_timeout 10m;
             proxy_connect_timeout  13s;
-            proxy_send_timeout  10s;
+            proxy_send_timeout  90s;
             proxy_read_timeout  25s;
             proxy_set_header       Host '${CACHED_HOST_HEADER}' ;
             proxy_set_header       Xcachegetrequest "$xcache";
