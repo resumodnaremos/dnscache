@@ -261,7 +261,7 @@ done
 #            proxy_set_header       X-Templar-CacheFor '15m' ;
             proxy_buffering        off;
             error_log              /dev/stderr ;'
-[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout $cached_reqtype;' ;
+[[ "${ACCESS_LOG}" = "true" ]] &&  echo ' access_log             /dev/stdout cachedps ;' ;
 [[ "${ACCESS_LOG}" = "true" ]] ||  echo ' access_log             off;' ;
 
 
