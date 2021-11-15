@@ -36,8 +36,8 @@ services:
   cache:
     restart: unless-stopped
     image: nginx:alpine
-    container_name: ${HOSTNAME:-VIRTUAL_HOST}
-    hostname: ${HOSTNAME:-VIRTUAL_HOST}
+    container_name: ${HOSTNAME:-nustercache}
+    hostname: ${HOSTNAME:-nustercache}
     ports:
       - "127.0.0.1:${LOCALPORT:-65080}:80/tcp"
     command:
