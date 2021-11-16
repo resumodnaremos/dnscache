@@ -79,6 +79,11 @@ map $request_method $cached_reqtype {
       server_name _ ;
       location /this_proxy_is_online { default_type text/plain;   root /dev/shm/.okresponse/ ;error_log /dev/stderr ; access_log off ; }
       location /nginx_status         { stub_status; access_log off; allow 127.0.0.1; deny all ; }'
+
+[[ "${ROBOTS_REJECT}" = "true"  ]]  && echo 'location = /robots.txt { return 200 "User-agent: *\nDisallow: /\n"; }'
+[[ "${ROBOTS_ACCEPT}" = "true"  ]]  && echo 'location = /robots.txt { return 200 "User-agent: *\nDisallow: \n"; }'
+
+
 ## if  REDIRECT_FAVICON is a url
 echo "${REDIRECT_FAVICON}" |grep -q -e "^http://" -e "^https://"  &&   echo 'location /favicon.ico  {        return 301 '${REDIRECT_FAVICON}' ; error_log /dev/stderr ;access_log off; }'
 
