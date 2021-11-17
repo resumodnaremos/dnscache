@@ -81,7 +81,7 @@ map $request_method $cached_reqtype {
       location /nginx_status         { stub_status; access_log off; allow 127.0.0.1; deny all ; }'
 
 [[ "${ROBOTS_REJECT}" = "true"  ]]  && echo 'location = /robots.txt { return 200 "User-agent: *\nDisallow: /\n"; }'
-[[ "${ROBOTS_ACCEPT}" = "true"  ]]  && echo 'location = /robots.txt { return 200 "User-agent: *\nDisallow: \n"; }'
+[[ "${ROBOTS_ACCEPT}" = "true"  ]]  && echo 'location = /robots.txt { return 200 "User-agent: *\nDisallow: \n" ; }'
 
 
 ## if  REDIRECT_FAVICON is a url
