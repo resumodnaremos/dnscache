@@ -44,6 +44,6 @@ RewriteRule ^(/combine/.*)\.mp4$ https://yourrealdomain.lan/$1.mp4 [L,R=301]
 * start with `docker-compose up`
 ---
 
-<a href="https://the-foundation.gitlab.io/">
+
 <h3>A project of the foundation</h3>
-<div><img src="https://hcxi2.2ix.ch/gitlab/the-foundation/docker-cache-nuster/README.md/logo.jpg" width="480" height="270"/></div></a>
+<a href="https://the-foundation.gitlab.io/"><div><img src="https://hcxi2.2ix.ch/gitlab/the-foundation/docker-cache-nuster/README.md/logo.jpg" width="480" height="270"/></div></a>
