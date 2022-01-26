@@ -739,9 +739,8 @@ echo '    }
 #
 
 #nginx -t  && nginx -g  'daemon off;'
-test -e /single_container && echo replacing n
  
-test -e /single_container && sed 's/cache.'${VIRTUAL_HOST}'/127.0.0.1/g' $(find -type f /etc/nginx) -i 
+test -e /single_container && sed 's/cache.'${VIRTUAL_HOST}'/127.0.0.1/g' -i /etc/nginx/nginx.conf 
 
 sleep 0.2
 #while (true);do varnishd -a :80 -f /etc/varnish/default.vcl -F;sleep 0.2;done &
