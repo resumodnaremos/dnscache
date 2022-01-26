@@ -51,5 +51,5 @@ RUN set -x \
 RUN ln -s /usr/local/sbin/nuster /usr/bin/nuster
 COPY init.sh init-nuster.sh init-single-container.sh logformats.conf /
 COPY nuster.cfg /nuster.template
-RUN chmod +x /init-single-container.sh && echo cache.nginx-cache-proxy.lan >> /etc/hosts
+RUN chmod +x /init-single-container.sh
 ENTRYPOINT /init.sh
