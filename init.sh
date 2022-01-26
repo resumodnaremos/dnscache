@@ -740,6 +740,7 @@ echo '    }
 
 #nginx -t  && nginx -g  'daemon off;'
 
+test -e /single_container && sed 's/cache.'${VIRTUAL_HOST}'/127.0.0.1/g' $(find -type f /etc/nginx) -i 
 sleep 0.2
 #while (true);do varnishd -a :80 -f /etc/varnish/default.vcl -F;sleep 0.2;done &
 while (true);do curl -s 127.0.0.1/nginx_status|sed 's/$/|/g'|tr -d '\n'|sed 's/^/STATS: /g';echo;sleep 3600;done &
