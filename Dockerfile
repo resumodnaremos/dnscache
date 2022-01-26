@@ -50,6 +50,5 @@ RUN set -x \
         && apk del .build-deps
 RUN ln -s /usr/local/sbin/nuster /usr/bin/nuster
 COPY init.sh init-nuster.sh init-single-container.sh logformats.conf /
-RUN chmod +x /init-single-container.sh
-echo cache.nginx-cache-proxy.lan >> /etc/hosts
+RUN chmod +x /init-single-container.sh && echo cache.nginx-cache-proxy.lan >> /etc/hosts
 ENTRYPOINT /init.sh
