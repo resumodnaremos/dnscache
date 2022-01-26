@@ -48,7 +48,7 @@ RUN set -x \
         \
         && rm -rf /tmp/nuster* \
         && apk del .build-deps
-        
+RUN ln -s /usr/local/sbin/nuster /usr/bin/nuster
 COPY init.sh logformats.conf /
 RUN chmod +x /init.sh
 ENTRYPOINT /init.sh
