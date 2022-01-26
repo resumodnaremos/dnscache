@@ -1,5 +1,5 @@
 FROM nginx:alpine
-RUN apk add curl libc-dev bash grep jq git make lua5.3-dev gcc binutils
+RUN apk add curl libc-dev bash grep jq git make lua5.3-dev gcc binutils  libc6-dev
 
 #RUN wget -O- $(curl https://raw.githubusercontent.com/jiangwenyuan/nuster/master/Download.md|grep http|grep /nuster/releases/download/|grep gz |head -n1)|tar xvz
 RUN git clone https://github.com/jiangwenyuan/nuster.git
